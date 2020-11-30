@@ -9,6 +9,8 @@ import (
 
 const (
 	objDelim     = ".$."
+	objSuffix    = ".$"
+	keySuffix    = ".@"
 	jsonReadOnly = "json args driver is read-only"
 )
 
@@ -48,6 +50,20 @@ func (d *jsonDriver) GetArray(name string) []string {
 		for i := range items {
 			collect(items[i])
 		}
+	}
+
+	if strings.HasSuffix(name, objSuffix) {
+		gjson.GetBytes(d.src, strings.TrimSuffix(name, objSuffix)).ForEach(func(key, value gjson.Result) bool {
+			collect(value)
+			return true
+		})
+	}
+
+	if strings.HasSuffix(name, keySuffix) {
+		gjson.GetBytes(d.src, strings.TrimSuffix(name, keySuffix)).ForEach(func(key, value gjson.Result) bool {
+			collect(key)
+			return true
+		})
 	}
 
 	if parts := strings.Split(name, objDelim); len(parts) > 1 {

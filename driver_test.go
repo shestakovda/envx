@@ -89,6 +89,10 @@ func TestDriverJSON(t *testing.T) {
 				"Город": "Усть-Каменогорск",
 				"Ник в PUBG": "pluto",
 			}
+		},
+		"ansdict": {
+			"f1": "f2",
+			"f3": "f4",
 		}
 	}`)
 
@@ -97,6 +101,8 @@ func TestDriverJSON(t *testing.T) {
 	assert.Equal(t, "ololo", drv.Get("test"))
 	assert.Equal(t, "Петров В.", drv.Get("тачки.0.владельцы.1"))
 	assert.Equal(t, []string{"purpur", "furfur"}, drv.GetArray("meow"))
+	assert.Equal(t, []string{"f1", "f3"}, drv.GetArray("ansdict.@"))
+	assert.Equal(t, []string{"f2", "f4"}, drv.GetArray("ansdict.$"))
 	assert.Equal(t, []string{"vaz", "gaz"}, drv.GetArray("тачки.#.модель"))
 	assert.Equal(t, []string{"1995", "1986"}, drv.GetArray("тачки.#.год"))
 	assert.Equal(t, []string{"2", "3"}, drv.GetArray("тачки.#.владельцы.#"))
@@ -106,6 +112,10 @@ func TestDriverJSON(t *testing.T) {
 	assert.Equal(t, []string{
 		"Москва", "Калуга", "Усть-Каменогорск",
 	}, drv.GetArray("Владельцы.$.Город"))
+
+	assert.Equal(t, []string{
+		"Иванов", "Сидоров-Пражский", "П. Лут",
+	}, drv.GetArray("Владельцы.@"))
 
 	drv = envx.NewDriverJSON([]byte(jsBenchEvent))
 
